@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitcoin Ordinal Viewer</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Bitcoin Ordinal Viewer</h1>
+
+    <label for="blockNumber">Enter Block Number:</label>
+    <input type="number" id="blockNumber" placeholder="Enter block number">
+    <button onclick="fetchData()">Search</button>
+
+    <div id="result"></div>
+
+    <script>
+        function fetchData() {
+            const blockNumber = document.getElementById('blockNumber').value;
+
+            // Replace 'your_github_raw_url' with the raw URL of your hosted JSON file on GitHub
+            const jsonUrl = `https://raw.githubusercontent.com/TheBoxNat/TheBox/main/thebox.json`;
+
+            fetch(jsonUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const blockData = data.find(entry => entry.id === `inscription_${blockNumber}`);
+                    if (blockData) {
+                        displayResult(blockData);
+                    } else {
+                        document.getElementById('result').innerHTML = 'Block not found';
+                    }
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function displayResult(data) {
+            const resultElement = document.getElementById('result');
+            resultElement.innerHTML = `<h2>${data.meta.name}</h2>
+                <img src="${data.meta.high_res_img_url}" alt="Block Image" style="max-width: 100%">
+                <table>
+                    <tr><th>Trait Type</th><th>Value</th></tr>
+                    ${data.meta.attributes.map(attr => `<tr><td>${attr.trait_type}</td><td>${attr.value}</td></tr>`).join('')}
+                </table>`;
+        }
+    </script>
+
+</body>
+</html>
