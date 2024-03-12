@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -42,7 +43,7 @@
             fetch(jsonUrl)
                 .then(response => response.json())
                 .then(data => {
-                    const blockData = data.find(entry => entry.id === `inscription_${blockNumber}`);
+                    const blockData = data.find(entry => entry.meta.name.includes(blockNumber));
                     if (blockData) {
                         displayResult(blockData);
                     } else {
