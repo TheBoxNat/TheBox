@@ -132,25 +132,27 @@
                 </table>`;
         }
 
-        function calculateRarity(data, allData) {
-            const traitCount = {};
-            const currentBlockTraits = new Set(data.meta.attributes.map(attr => attr.trait_type));
+function calculateRarity(data, allData) {
+    const traitCount = {};
+    const totalBlocks = allData.length;
 
-            // Count occurrences of each trait across all blocks
-            allData.forEach(blockData => {
-                blockData.meta.attributes.forEach(attr => {
-                    traitCount[attr.trait_type] = (traitCount[attr.trait_type] || 0) + 1;
-                });
-            });
+    // Count occurrences of each trait value across all blocks
+    allData.forEach(blockData => {
+        blockData.meta.attributes.forEach(attr => {
+            const key = `${attr.trait_type}:${attr.value}`;
+            traitCount[key] = (traitCount[key] || 0) + 1;
+        });
+    });
 
-            // Calculate rarity percentage for each trait in the current block
-            const rarityData = data.meta.attributes.map(attr => {
-                const rarity = (traitCount[attr.trait_type] / allData.length) * 100;
-                return { ...attr, rarity };
-            });
+    // Calculate rarity percentage for each trait value in the current block
+    const rarityData = data.meta.attributes.map(attr => {
+        const key = `${attr.trait_type}:${attr.value}`;
+        const rarity = (traitCount[key] / totalBlocks) * 100;
+        return { ...attr, rarity };
+    });
 
-            return rarityData;
-        }
+    return rarityData;
+}
     </script>
 
 </body>
