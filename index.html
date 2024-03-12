@@ -73,6 +73,11 @@
         th {
             background-color: #333333; /* Dark background for table header */
         }
+
+        .rarity {
+            font-size: 80%;
+            color: #888888; /* Set text color to light gray */
+        }
     </style>
 </head>
 <body>
@@ -117,12 +122,32 @@
 
         function displayResult(data) {
             const resultElement = document.getElementById('result');
+            const rarityData = calculateRarity(data);
+
             resultElement.innerHTML = `<h2>${data.meta.name}</h2>
                 
                 <table>
-                    <tr><th>Trait Type</th><th>Value</th></tr>
-                    ${data.meta.attributes.map(attr => `<tr><td>${attr.trait_type}</td><td>${attr.value}</td></tr>`).join('')}
+                    <tr><th>Trait Type</th><th>Value</th><th>Rarity</th></tr>
+                    ${rarityData.map((attr, index) => `<tr><td>${attr.trait_type}</td><td>${attr.value}</td><td class="rarity">${attr.rarity.toFixed(2)}%</td></tr>`).join('')}
                 </table>`;
+        }
+
+        function calculateRarity(data) {
+            const traitCounts = {};
+            const totalTraits = data.meta.attributes.length;
+
+            // Count occurrences of each trait
+            data.meta.attributes.forEach(attr => {
+                traitCounts[attr.trait_type] = (traitCounts[attr.trait_type] || 0) + 1;
+            });
+
+            // Calculate rarity percentage for each trait
+            const rarityData = data.meta.attributes.map(attr => {
+                const rarity = (traitCounts[attr.trait_type] / totalTraits) * 100;
+                return { ...attr, rarity };
+            });
+
+            return rarityData;
         }
     </script>
 
