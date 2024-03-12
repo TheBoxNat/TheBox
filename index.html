@@ -132,23 +132,23 @@
                 </table>`;
         }
 
-        function calculateRarity(data) {
-            const traitCounts = {};
-            const totalTraits = data.meta.attributes.length;
+       function calculateRarity(data) {
+    const traitCounts = {};
+    const totalTraits = data.meta.attributes.length;
 
-            // Count occurrences of each trait
-            data.meta.attributes.forEach(attr => {
-                traitCounts[attr.trait_type] = (traitCounts[attr.trait_type] || 0) + 1;
-            });
+    // Count occurrences of each trait
+    data.meta.attributes.forEach(attr => {
+        traitCounts[attr.trait_type] = (traitCounts[attr.trait_type] || 0) + 1;
+    });
 
-            // Calculate rarity percentage for each trait
-            const rarityData = data.meta.attributes.map(attr => {
-                const rarity = (traitCounts[attr.trait_type] / totalTraits) * 100;
-                return { ...attr, rarity };
-            });
+    // Calculate rarity percentage for each trait
+    const rarityData = data.meta.attributes.map(attr => {
+        const rarity = (traitCounts[attr.trait_type] / totalTraits) * 100;
+        return { ...attr, rarity };
+    });
 
-            return rarityData;
-        }
+    return rarityData;
+}
     </script>
 
 </body>
