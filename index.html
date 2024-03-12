@@ -49,7 +49,7 @@
         }
 
         #ipfsImage img {
-            max-width: 25%; /* Ensure the image doesn't exceed the container's width */
+            max-width: 100%; /* Ensure the image doesn't exceed the container's width */
             height: auto; /* Maintain the aspect ratio of the image */
         }
 
@@ -108,7 +108,7 @@
                 .then(data => {
                     const blockData = data.find(entry => entry.meta.name.includes(blockNumber));
                     if (blockData) {
-                        displayResult(blockData);
+                        displayResult(blockData, data);
                     } else {
                         document.getElementById('result').innerHTML = 'Block not found';
                     }
@@ -120,9 +120,9 @@
             document.getElementById('ipfsImage').innerHTML = `<img src="${ipfsImageUrl}" alt="IPFS Image">`;
         }
 
-        function displayResult(data) {
+        function displayResult(data, allData) {
             const resultElement = document.getElementById('result');
-            const rarityData = calculateRarity(data);
+            const rarityData = calculateRarity(data, allData);
 
             resultElement.innerHTML = `<h2>${data.meta.name}</h2>
                 
@@ -132,23 +132,25 @@
                 </table>`;
         }
 
-       function calculateRarity(data) {
-    const traitCounts = {};
-    const totalTraits = data.meta.attributes.length;
+        function calculateRarity(data, allData) {
+            const traitCounts = {};
+            const totalBlocks = allData.length;
 
-    // Count occurrences of each trait
-    data.meta.attributes.forEach(attr => {
-        traitCounts[attr.trait_type] = (traitCounts[attr.trait_type] || 0) + 1;
-    });
+            // Count occurrences of each trait across all blocks
+            allData.forEach(blockData => {
+                blockData.meta.attributes.forEach(attr => {
+                    traitCounts[attr.trait_type] = (traitCounts[attr.trait_type] || 0) + 1;
+                });
+            });
 
-    // Calculate rarity percentage for each trait
-    const rarityData = data.meta.attributes.map(attr => {
-        const rarity = (traitCounts[attr.trait_type] / totalTraits) * 100;
-        return { ...attr, rarity };
-    });
+            // Calculate rarity percentage for each trait in the current block
+            const rarityData = data.meta.attributes.map(attr => {
+                const rarity = (traitCounts[attr.trait_type] / totalBlocks) * 100;
+                return { ...attr, rarity };
+            });
 
-    return rarityData;
-}
+            return rarityData;
+        }
     </script>
 
 </body>
